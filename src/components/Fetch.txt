@@ -1,0 +1,66 @@
+const save = async () => {
+    
+    const formData = new FormData()
+    Array.from(imageFile).forEach((file) => formData.append("images", file))
+    Array.from(proofImages).forEach((file) =>
+      formData.append("proofImages", file))
+
+    formData.append("title", title)
+    formData.append("price", price)
+    formData.append("description", description)
+    formData.append("location", address)
+    formData.append("area", size)
+    formData.append("bedrooms", bedrooms)
+    formData.append("bathrooms", bathrooms)
+    formData.append("propertyType", selectedOption)
+    formData.append("user_id", sessionStorage.getItem("id"))
+
+    console.log(formData)
+    console.log("TOKEN",sessionStorage.getItem("token"))
+
+    try {
+      const response = await axios.post("/apartment/sell/save", formData, {
+        headers: {
+          Authorization: Bearer ${sessionStorage.getItem("token")},
+          "Content-Type": "multipart/form-data",
+        },
+      })
+        toast.success("Success",{autoClose:2000})
+
+      console.log(response.status)
+    } 
+    catch (error) {
+      console.log("ERROR",error)
+      // if(response?.status === 401)
+      // {
+      //   toast.error("Failed",{autoClose:2000})
+      // }
+      // console.error(error)
+    }
+  }
+
+
+
+  useEffect(() => {
+    const favouritelist = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8070/apartment/sell/sellectAllfavouriteApartment",
+          {
+            headers: {
+              Authorization: Bearer ${sessionStorage.getItem("token")},
+              "Content-Type": "application/json",
+            },
+            params: {
+              userId: sessionStorage.getItem("id"),
+            },
+          }
+        )
+        setfavdata(response.data.reverse())
+      } catch (error) {
+        console.error("Error fetching data:", error)
+      }
+    }
+
+    favouritelist()
+  }, [])
